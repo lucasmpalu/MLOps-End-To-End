@@ -37,8 +37,7 @@ vector_db = PGVector(
     collection_name="historiales_clinicos",
     connection=os.getenv("DATABASE_URL"),
     use_jsonb=True,
-)
-
+) #
 
 
 contenido_RAG = "casos clínicos, sintomas, diagnosticos y que forma confirmación por imágenes se recomienda para cada caso clínico"
