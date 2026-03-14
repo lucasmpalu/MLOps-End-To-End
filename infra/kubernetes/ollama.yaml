@@ -28,7 +28,7 @@ spec:
       labels:
         app: ollama
     spec:
-      containers:
+custom      containers:
       - name: ollama-container
         image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/ollama-custom:latest
         imagePullPolicy: Always
@@ -36,4 +36,4 @@ spec:
         - containerPort: 11434
         resources:
           limits:
-            nvidia.com/gpu: 1
+            # nvidia.com/gpu: 1 # momentaneamente hasta tener permiso para GPU con AWS

@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: training-container
-        image: tu-registro/imagen-entrenamiento:latest
+        image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/train-worker:latest
         resources:
           limits:
             nvidia.com/gpu: 1     

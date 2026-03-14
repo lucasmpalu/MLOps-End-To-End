@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: tu-registro/mi-fastapi-rag:latest
+        image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/backend-api:latest
         ports:
         - containerPort: 8000
         env:

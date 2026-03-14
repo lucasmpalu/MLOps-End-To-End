@@ -85,3 +85,42 @@ jobs:
           cd ollama_setup
           docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
           docker push $ECR_REGISTRY/$REPO_NAME:latest
+
+
+  deploy-to-eks:
+    needs: build-and-push # Solo arranca si el build terminó bien
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Instalar kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configurar acceso al Cluster EKS
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name lostsys-cluster-dev
+
+      - name: Aplicar Manifiestos de Kubernetes
+        run: |
+          # Primero los secretos y policies (los cimientos)
+          # NOTA: Asegurate de que secrets.yaml esté en tu repo 
+          # O mejor: manejalo con GitHub Secrets para que no esté en texto plano
+          kubectl apply -f infra/kubernetes/policies.yaml
+          
+          # Luego los servicios (Airflow, FastAPI, Ollama)
+          kubectl apply -f infra/kubernetes/ollama.yaml
+          kubectl apply -f infra/kubernetes/train_and_mlflow.yaml
+          kubectl apply -f infra/kubernetes/fastapi.yaml
+          kubectl apply -f infra/kubernetes/airflow.yaml
+          
+          # Forzar el reinicio para que tomen las imágenes LATEST
+          kubectl rollout restart deployment ollama-deployment
+          kubectl rollout restart deployment fastapi-deployment

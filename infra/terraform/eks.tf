@@ -29,7 +29,7 @@ eks_managed_node_groups = {
       min_size       = 0
       max_size       = 2
       desired_size   = 1
-      instance_types = ["g4dn.xlarge"]
+      instance_types = ["t3.large"]
 
       capacity_type  = "SPOT" 
 

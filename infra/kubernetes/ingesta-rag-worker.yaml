@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: <tu-cuenta>.dkr.ecr.us-east-1.amazonaws.com/ingesta-worker:latest
+        image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/ingesta-worker:latest
         env:
           - name: DATABASE_URL
             valueFrom:

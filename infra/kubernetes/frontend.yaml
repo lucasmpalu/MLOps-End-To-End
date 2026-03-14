@@ -1,0 +1,44 @@
+# ==========================================
+# 1. EL SERVICE (Para acceder desde el navegador)
+# ==========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80         # Puerto en el que escuchará el LoadBalancer
+      targetPort: 8501 # Puerto real de Streamlit (o el que use tu front)
+  type: LoadBalancer   # Esto le dice a AWS que cree un Load Balancer real con una IP pública
+---
+# ==========================================
+# 2. EL DEPLOYMENT (El contenedor de la UI)
+# ==========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/frontend-ui:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
+        
+        # --- VARIABLES DE ENTORNO ---
+        env:
+          - name: BACKEND_URL
+            value: "http://backend-service:8000" # URL interna del Service de FastAPI
