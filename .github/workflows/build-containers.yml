@@ -4,15 +4,19 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - 'RAG_Airflow/**'
-      - 'fine-tunning/**'
-      - 'ollama_setup/**'
+    # paths:  <-- Comentalo para probar que el caño funcione con cualquier push
+    #   - 'backend/**'
+    #   - 'frontend/**'
+    #   - 'RAG_Airflow/**'
+    #   - 'fine-tunning/**'
+    #   - 'ollama_setup/**'
 
 env:
   AWS_REGION: us-east-1
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-and-push:
@@ -32,63 +36,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build & Push Airflow
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPO_NAME: airflow-server
-        run: |
-          cd RAG_Airflow
-          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
-          docker push $ECR_REGISTRY/$REPO_NAME:latest
-
-      - name: Build & Push Worker Ingesta
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPO_NAME: ingesta-worker
-        run: |
-          cd RAG_Airflow/worker_ingesta
-          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
-          docker push $ECR_REGISTRY/$REPO_NAME:latest
-
-      - name: Build & Push Train Worker
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPO_NAME: train-worker
-        run: |
-          cd fine-tunning
-          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
-          docker push $ECR_REGISTRY/$REPO_NAME:latest
-
-      - name: Build & Push Backend
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPO_NAME: backend-api
-        run: |
-          cd backend
-          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
-          docker push $ECR_REGISTRY/$REPO_NAME:latest
-          
-      - name: Build & Push Frontend
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPO_NAME: frontend-ui
-        run: |
-          cd frontend
-          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
-          docker push $ECR_REGISTRY/$REPO_NAME:latest
-
-      - name: Build & Push Ollama Custom
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPO_NAME: ollama-custom
-        run: |
-          cd ollama_setup
-          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
-          docker push $ECR_REGISTRY/$REPO_NAME:latest
-
+      # ... (Acá van todos tus pasos de Docker Build & Push que ya tenés) ...
+      # 1. Airflow, 2. Worker Ingesta, 3. Train Worker, 4. Backend, 5. Frontend, 6. Ollama
 
   deploy-to-eks:
-    needs: build-and-push # Solo arranca si el build terminó bien
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
@@ -108,19 +60,24 @@ jobs:
         run: |
           aws eks update-kubeconfig --region us-east-1 --name lostsys-cluster-dev
 
+      # === PASO CRUCIAL PARA TUS SECRETOS ===
+      - name: Crear archivo de secretos de Kubernetes
+        run: |
+          echo "${{ secrets.K8S_SECRETS }}" > infra/kubernetes/secrets.yaml
+
       - name: Aplicar Manifiestos de Kubernetes
         run: |
-          # Primero los secretos y policies (los cimientos)
-          # NOTA: Asegurate de que secrets.yaml esté en tu repo 
-          # O mejor: manejalo con GitHub Secrets para que no esté en texto plano
+          # Aplicamos los secretos PRIMERO para que los pods no den error al nacer
+          kubectl apply -f infra/kubernetes/secrets.yaml
           kubectl apply -f infra/kubernetes/policies.yaml
           
-          # Luego los servicios (Airflow, FastAPI, Ollama)
+          # Aplicamos el resto
           kubectl apply -f infra/kubernetes/ollama.yaml
           kubectl apply -f infra/kubernetes/train_and_mlflow.yaml
           kubectl apply -f infra/kubernetes/fastapi.yaml
           kubectl apply -f infra/kubernetes/airflow.yaml
+          kubectl apply -f infra/kubernetes/frontend.yaml # <--- ¡No te olvides del front!
           
-          # Forzar el reinicio para que tomen las imágenes LATEST
+          # Reinicio para asegurar la última imagen
           kubectl rollout restart deployment ollama-deployment
           kubectl rollout restart deployment fastapi-deployment
