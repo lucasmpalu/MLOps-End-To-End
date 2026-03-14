@@ -4,7 +4,7 @@ from graph import ejecutable
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="RAG API", version="1.0")
-
+#
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
