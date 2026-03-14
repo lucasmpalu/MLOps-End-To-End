@@ -12,10 +12,11 @@ import graphviz
 import yaml
 from pgvector import PGVector
 
-#
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
+#
 if not all([OPENAI_API_KEY, TAVILY_API_KEY]):
     raise ValueError("Faltan credenciales! K8s no inyectaron las variables de entorno.")
 
