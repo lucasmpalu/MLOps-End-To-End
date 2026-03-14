@@ -14,19 +14,15 @@ on:
 env:
   AWS_REGION: us-east-1
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Credenciales de AWS
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -34,10 +30,43 @@ jobs:
 
       - name: Login a Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
-      # ... (Acá van todos tus pasos de Docker Build & Push que ya tenés) ...
-      # 1. Airflow, 2. Worker Ingesta, 3. Train Worker, 4. Backend, 5. Frontend, 6. Ollama
+      # 1. AIRFLOW
+      - name: Build & Push Airflow
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/airflow-server:latest ./RAG_Airflow
+          docker push ${{ steps.login-ecr.outputs.registry }}/airflow-server:latest
+
+      # 2. WORKER INGESTA
+      - name: Build & Push Worker Ingesta
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./RAG_Airflow/worker_ingesta
+          docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
+
+      # 3. TRAIN WORKER
+      - name: Build & Push Train Worker
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/train-worker:latest ./fine-tunning
+          docker push ${{ steps.login-ecr.outputs.registry }}/train-worker:latest
+
+      # 4. BACKEND
+      - name: Build & Push Backend
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/backend-api:latest ./backend
+          docker push ${{ steps.login-ecr.outputs.registry }}/backend-api:latest
+
+      # 5. FRONTEND
+      - name: Build & Push Frontend
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/frontend-ui:latest ./frontend
+          docker push ${{ steps.login-ecr.outputs.registry }}/frontend-ui:latest
+
+      # 6. OLLAMA CUSTOM
+      - name: Build & Push Ollama Custom
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ollama-custom:latest ./ollama_setup
+          docker push ${{ steps.login-ecr.outputs.registry }}/ollama-custom:latest
 
   deploy-to-eks:
     needs: build-and-push
