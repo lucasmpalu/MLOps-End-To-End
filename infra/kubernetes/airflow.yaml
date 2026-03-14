@@ -45,7 +45,7 @@ spec:
       serviceAccountName: airflow-sa
       containers:
       - name: scheduler
-        image: 559979279038.ecr.aws/airflow-server:latest
+        image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/airflow-server:latest
         command: ["airflow", "scheduler"]
         env:
         - name: AIRFLOW__CORE__EXECUTOR
@@ -76,7 +76,7 @@ spec:
     spec:
       containers:
       - name: webserver
-        image: 559979279038.ecr.aws/airflow-server:latest
+        image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/airflow-server:latest
         command: ["airflow", "webserver"]
         ports:
         - containerPort: 8080
