@@ -25,8 +25,8 @@ ENV/
 
 # === Modelos y Datos pesados ===
 # No queremos subir gigas de pesos de Llama a GitHub
-fine-tunning/models/
-fine-tunning/data/
+fine-tuning/models/
+fine-tuning/data/
 ollama_setup/pesos_descargados_de_s3/
 
 # === OS & IDE ===
