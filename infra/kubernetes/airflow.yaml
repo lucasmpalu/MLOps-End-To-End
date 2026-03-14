@@ -56,8 +56,8 @@ spec:
         - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
           valueFrom:
             secretKeyRef:
-            name: rds-secrets
-            key: airflow-url
+              name: rds-secrets
+              key: airflow-url
 ---
 apiVersion: apps/v1
 kind: Deployment
