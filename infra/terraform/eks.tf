@@ -55,3 +55,16 @@ output "cluster_name" {
   value = module.eks.cluster_name
 }
 
+resource "kubernetes_namespace" "airflow" {
+  metadata {
+    name = "airflow"
+  }
+  depends_on = [module.eks]
+}
+
+resource "kubernetes_namespace" "mlflow" {
+  metadata {
+    name = "mlflow"
+  }
+  depends_on = [module.eks]
+}
