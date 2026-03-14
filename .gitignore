@@ -1,0 +1,35 @@
+# === Terraform ===
+# Archivos de estado (TIENEN CLAVES EN TEXTO PLANO)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Archivos de variables (Acá están las contraseñas reales)
+*.tfvars
+*.tfvars.json
+
+# === Kubernetes & Secrets ===
+# NUNCA subimos secretos codificados
+infra/kubernetes/secrets.yaml
+infra/kubernetes/base64.bash
+
+# === Python & ML ===
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+
+# === Modelos y Datos pesados ===
+# No queremos subir gigas de pesos de Llama a GitHub
+fine-tunning/models/
+fine-tunning/data/
+ollama_setup/pesos_descargados_de_s3/
+
+# === OS & IDE ===
+.DS_Store
+.vscode/
+.idea/

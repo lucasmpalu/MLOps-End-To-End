@@ -1,0 +1,111 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-llama-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: training-container
+        image: tu-registro/imagen-entrenamiento:latest
+        resources:
+          limits:
+            nvidia.com/gpu: 1     
+        env:
+        - name: MLFLOW_TRACKING_URI
+          value: "http://mlflow-service:5000"
+        
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-secrets
+              key: api-key
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-v3-credentials
+              key: access-key
+        
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-v3-credentials
+              key: secret-key
+
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            secretKeyRef:
+             name: s3-secrets
+             key: bucket-name
+
+      restartPolicy: Never
+  backoffLimit: 0
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-deployment
+  labels:
+    app: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      containers:
+      - name: mlflow-server
+        image: ghcr.io/mlflow/mlflow:latest
+        ports:
+        - containerPort: 5000
+
+        command: ["mlflow", "server"]
+        args:
+          - "--host=0.0.0.0"
+          - "--port=5000"
+          - "--backend-store-uri=$(DATABASE_URL)"
+          - "--default-artifact-root=s3://$(S3_BUCKET_NAME)/mlflow-artifacts"
+
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-v3-credentials
+                key: access-key
+          - name: AWS_SECRET_ACCESS_KEY
+
+            valueFrom:
+              secretKeyRef:
+                name: aws-v3-credentials
+                key: secret-key                
+
+          - name: S3_BUCKET_NAME
+            valueFrom:
+              secretKeyRef:
+                name: s3-secrets
+                key: bucket-name
+                
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: rds-secrets 
+                key: url
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-service
+spec:
+  selector:
+    app: mlflow
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP

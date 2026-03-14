@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+
+langchain
+langchain-openai
+langgraph
+langchain-community
+
+pinecone-client
+langchain-pinecone
+
+tavily-python
+langchain-tavily
+

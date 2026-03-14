@@ -1,0 +1,14 @@
+boto3
+botocore
+mlflow
+
+openai
+pandas
+datasets
+
+langchain
+langchain-community
+pypdf
+langchain-text-splitters
+
+python-dotenv

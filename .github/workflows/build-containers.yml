@@ -1,0 +1,87 @@
+name: Build and Push ALL Images to ECR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'RAG_Airflow/**'
+      - 'fine-tunning/**'
+      - 'ollama_setup/**'
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login a Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build & Push Airflow
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: airflow-server
+        run: |
+          cd RAG_Airflow
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest
+
+      - name: Build & Push Worker Ingesta
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: ingesta-worker
+        run: |
+          cd RAG_Airflow/worker_ingesta
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest
+
+      - name: Build & Push Train Worker
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: train-worker
+        run: |
+          cd fine-tunning
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest
+
+      - name: Build & Push Backend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: backend-api
+        run: |
+          cd backend
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest
+          
+      - name: Build & Push Frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: frontend-ui
+        run: |
+          cd frontend
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest
+
+      - name: Build & Push Ollama Custom
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: ollama-custom
+        run: |
+          cd ollama_setup
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest

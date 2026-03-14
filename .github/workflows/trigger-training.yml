@@ -1,0 +1,34 @@
+name: Manual - Build & Train LLM
+
+on:
+  workflow_dispatch: 
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  build-push-and-train:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login a Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build & Push Train Worker
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: train-worker
+        run: |
+          cd fine-tunning
+          docker build -t $ECR_REGISTRY/$REPO_NAME:latest .
+          docker push $ECR_REGISTRY/$REPO_NAME:latest

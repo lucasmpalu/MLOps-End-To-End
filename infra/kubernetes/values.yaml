@@ -1,0 +1,7 @@
+config:
+  logging:
+    remote_logging: 'True'
+
+    remote_base_log_folder: 's3://mlops-ai-data-lucas-palu/airflow-logs'
+
+    remote_log_conn_id: 'aws_s3_conexion'

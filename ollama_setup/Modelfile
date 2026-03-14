@@ -1,0 +1,11 @@
+FROM ./pesos_descargados_de_s3
+
+PARAMETER temperature 0.1
+PARAMETER num_ctx 4096
+PARAMETER stop "<|eot_id|>"
+PARAMETER stop "<|start_header_id|>"
+
+SYSTEM """
+Eres un asistente experto en analizar historiales clínicos.
+Responde de manera precisa y profesional basándote en el contexto proporcionado.
+"""
