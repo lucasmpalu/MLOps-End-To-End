@@ -1,17 +1,3 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: ollama-service
-spec:
-  selector:
-    app: ollama
-  ports:
-    - protocol: TCP
-      port: 11434
-      targetPort: 11434
-  type: ClusterIP
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,12 +14,30 @@ spec:
       labels:
         app: ollama
     spec:
-custom      containers:
+      containers:
       - name: ollama-container
         image: 559979279038.dkr.ecr.us-east-1.amazonaws.com/ollama-custom:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 11434
+        env:
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            secretKeyRef:
+              name: s3-secrets
+              key: bucket-name
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-v3-credentials
+              key: access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-v3-credentials
+              key: secret-key
         resources:
           limits:
-            # nvidia.com/gpu: 1 # momentaneamente hasta tener permiso para GPU con AWS
+            cpu: "2"
+            memory: "4Gi"
+            # nvidia.com/gpu: 1 
