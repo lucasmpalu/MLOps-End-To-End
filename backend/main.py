@@ -33,7 +33,7 @@ def handle_query(request: QueryRequest):
     response = resultado_final.get("respuesta", "No se pudo generar una respuesta")
 
     return {"response": response}
-
+#
 
 if __name__ == "__main__":
     import uvicorn
