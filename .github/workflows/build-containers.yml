@@ -10,6 +10,10 @@ on:
       - 'RAG_Airflow/**'
       - 'fine-tunning/**'
       - 'ollama_setup/**'
+      - '.github/workflows/build-containers.yml' # Para que se dispare si editamos este mismo workflow
+      - 'infra/kubernetes/**' # Para que se dispare si editamos los manifiestos de K8s, así mantenemos todo sincronizado
+      - 'infra/terraform/**' # Por si editamos infra con Terraform, así mantenemos todo sincronizado
+      - 'worker-ingesta/**' # Para que se dispare si editamos el worker de ingesta
 
 env:
   AWS_REGION: us-east-1
