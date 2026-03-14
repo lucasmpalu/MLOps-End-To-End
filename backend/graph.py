@@ -12,6 +12,7 @@ import graphviz
 import yaml
 from pgvector import PGVector
 
+#
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
@@ -37,7 +38,7 @@ vector_db = PGVector(
     collection_name="historiales_clinicos",
     connection=os.getenv("DATABASE_URL"),
     use_jsonb=True,
-) ##
+) 
 
 
 contenido_RAG = "casos clínicos, sintomas, diagnosticos y que forma confirmación por imágenes se recomienda para cada caso clínico"

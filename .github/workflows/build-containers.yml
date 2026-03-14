@@ -35,14 +35,14 @@ jobs:
       # 1. AIRFLOW
       - name: Build & Push Airflow
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker_ingesta
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
           docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
 
       # 2. WORKER INGESTA
  # 2. WORKER INGESTA
       - name: Build & Push Worker Ingesta
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker_ingesta
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
           docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
       # 3. TRAIN WORKER
       - name: Build & Push Train Worker
