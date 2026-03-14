@@ -54,7 +54,7 @@ spec:
           value: "False"
 
         - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
-          alueFrom:
+          valueFrom:
             secretKeyRef:
             name: rds-secrets
             key: airflow-url
