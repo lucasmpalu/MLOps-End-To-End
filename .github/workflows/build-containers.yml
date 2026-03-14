@@ -35,8 +35,8 @@ jobs:
       # 1. AIRFLOW
       - name: Build & Push Airflow
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/airflow-server:latest ./RAG_Airflow
-          docker push ${{ steps.login-ecr.outputs.registry }}/airflow-server:latest
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker_ingesta
+          docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
 
       # 2. WORKER INGESTA
  # 2. WORKER INGESTA
