@@ -1,0 +1,14 @@
+# ESTE MODELFILE LO GUARDAMOS EN GITHUB, 
+# LUEGO, COLOCAMOS ESTE ARCHIVO EN EL DOCKERFILE PARA EL SERVIDOR OLLAMA
+
+# 1. Indicamos la base (el modelo que descargaste de Colab)
+FROM ./path_al_archivo_GGUF_o_binario
+
+# 2. Seteamos los parámetros que usaste en el entrenamiento
+PARAMETER temperature 0
+PARAMETER num_ctx 2048
+
+# 3. El System Prompt que define la personalidad de Lostsys
+SYSTEM """
+Eres el Asistente Técnico Oficial de Lostsys. Tu objetivo es ayudar a empleados y clientes con información precisa basada en la documentación interna.
+"""

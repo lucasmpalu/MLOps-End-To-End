@@ -47,7 +47,7 @@ jobs:
       # 3. TRAIN WORKER
       - name: Build & Push Train Worker
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/train-worker:latest ./fine-tunning
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/train-worker:latest ./fine-tuning
           docker push ${{ steps.login-ecr.outputs.registry }}/train-worker:latest
 
       # 4. BACKEND
@@ -105,7 +105,7 @@ jobs:
           kubectl apply -f infra/kubernetes/train_and_mlflow.yaml
           kubectl apply -f infra/kubernetes/fastapi.yaml
           kubectl apply -f infra/kubernetes/airflow.yaml
-          kubectl apply -f infra/kubernetes/frontend.yaml # <--- ¡No te olvides del front!
+          kubectl apply -f infra/kubernetes/frontend.yaml
           
           # Reinicio para asegurar la última imagen
           kubectl rollout restart deployment ollama-deployment
