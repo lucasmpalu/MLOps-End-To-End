@@ -43,7 +43,6 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
 
       # 2. WORKER INGESTA
- # 2. WORKER INGESTA
       - name: Build & Push Worker Ingesta
         run: |
           docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
@@ -97,7 +96,7 @@ jobs:
       - name: Crear archivo de secretos de Kubernetes
         run: |
           echo "${{ secrets.K8S_SECRETS }}" > infra/kubernetes/secrets.yaml
-          
+
       - name: Create RDS Secret in Airflow Namespace
         run: |
           # Primero nos aseguramos de que el namespace exista

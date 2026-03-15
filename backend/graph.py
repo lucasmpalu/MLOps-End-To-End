@@ -3,7 +3,7 @@ from langgraph.graph import StateGraph
 from langchain_core.runnables import RunnableLambda
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
 from langchain_core.output_parsers import StrOutputParser
