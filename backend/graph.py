@@ -8,7 +8,6 @@ from typing import TypedDict
 from langgraph.graph import StateGraph, END
 from langchain_core.output_parsers import StrOutputParser
 from tavily import TavilyClient
-import graphviz
 import yaml
 from pgvector import PGVector
 
