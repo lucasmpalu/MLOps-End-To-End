@@ -36,8 +36,13 @@ spec:
             secretKeyRef:
               name: aws-v3-credentials
               key: secret-key
+        # --- RECURSOS ESCASOS SIN GPU PARA PRUEBAS, EN REALIDAD HAY QUE PONERLE GPU, NO ESTOS RECURSOS QUE PUSIMOS ACÁ ---
         resources:
           limits:
             cpu: "2"
             memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+            # nvidia.com/gpu: 1 # Hasta que AWS nos permita con GPU
             # nvidia.com/gpu: 1 
