@@ -33,7 +33,7 @@ llm = ChatOpenAI(
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 vector_db = PGVector(
-    embeddings=embeddings,
+    embedding=embeddings,
     collection_name="historiales_clinicos",
     connection=os.getenv("DATABASE_URL"),
     use_jsonb=True,

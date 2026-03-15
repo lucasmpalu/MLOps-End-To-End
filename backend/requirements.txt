@@ -1,16 +1,17 @@
+# API y Servidor 
 fastapi
 uvicorn
 pydantic
 
+# IA y Orquestación
 langchain
 langchain-openai
 langgraph
 langchain-community
 
-pinecone-client
-langchain-pinecone
+pgvector
+psycopg2-binary
 
+# Herramientas del Agente
 tavily-python
 langchain-tavily
-
-pgvector
