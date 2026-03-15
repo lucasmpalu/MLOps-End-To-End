@@ -1,3 +1,5 @@
+# Es normal que esta imagen demore un poco en construirse la primera vez, ya que instala varias dependencias. 
+# Pero luego se cacheará y será mucho más rápida.
 FROM unsloth/unsloth:latest
 
  # Esta imagen base tiene un usuario no-root por defecto, pero necesitamos permisos de root para instalar dependencias del sistema
