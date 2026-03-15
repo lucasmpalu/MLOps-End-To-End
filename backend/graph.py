@@ -33,11 +33,11 @@ llm = ChatOpenAI(
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 vector_db = PGVector(
-    embedding_function=embeddings,
-    collection_name="historiales_clinicos",
-    connection=os.getenv("DATABASE_URL"),
-    use_jsonb=True,
-) 
+    os.getenv("DATABASE_URL"),           
+    "historiales_clinicos",             
+    embedding_function=embeddings,     
+    use_jsonb=True
+)
 
 
 contenido_RAG = "casos clínicos, sintomas, diagnosticos y que forma confirmación por imágenes se recomienda para cada caso clínico"
