@@ -32,44 +32,44 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login a Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+      # - name: Login a Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v2
 
-      # 1. AIRFLOW
-      - name: Build & Push Airflow
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
-          docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
+      # # 1. AIRFLOW
+      # - name: Build & Push Airflow
+      #   run: |
+      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
+      #     docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
 
-      # 2. WORKER INGESTA
-      - name: Build & Push Worker Ingesta
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
-          docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
-      # 3. TRAIN WORKER
-      - name: Build & Push Train Worker
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/train-worker:latest ./fine-tuning
-          docker push ${{ steps.login-ecr.outputs.registry }}/train-worker:latest
+      # # 2. WORKER INGESTA
+      # - name: Build & Push Worker Ingesta
+      #   run: |
+      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest ./worker-ingesta
+      #     docker push ${{ steps.login-ecr.outputs.registry }}/ingesta-worker:latest
+      # # 3. TRAIN WORKER
+      # - name: Build & Push Train Worker
+      #   run: |
+      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/train-worker:latest ./fine-tuning
+      #     docker push ${{ steps.login-ecr.outputs.registry }}/train-worker:latest
 
-      # 4. BACKEND
-      - name: Build & Push Backend
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/backend-api:latest ./backend
-          docker push ${{ steps.login-ecr.outputs.registry }}/backend-api:latest
+      # # 4. BACKEND
+      # - name: Build & Push Backend
+      #   run: |
+      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/backend-api:latest ./backend
+      #     docker push ${{ steps.login-ecr.outputs.registry }}/backend-api:latest
 
-      # 5. FRONTEND
-      - name: Build & Push Frontend
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/frontend-ui:latest ./frontend
-          docker push ${{ steps.login-ecr.outputs.registry }}/frontend-ui:latest
+      # # 5. FRONTEND
+      # - name: Build & Push Frontend
+      #   run: |
+      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/frontend-ui:latest ./frontend
+      #     docker push ${{ steps.login-ecr.outputs.registry }}/frontend-ui:latest
 
-      # 6. OLLAMA CUSTOM
-      - name: Build & Push Ollama Custom
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ollama-custom:latest ./ollama_setup
-          docker push ${{ steps.login-ecr.outputs.registry }}/ollama-custom:latest
+      # # 6. OLLAMA CUSTOM
+      # - name: Build & Push Ollama Custom
+      #   run: |
+      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/ollama-custom:latest ./ollama_setup
+      #     docker push ${{ steps.login-ecr.outputs.registry }}/ollama-custom:latest
 
   deploy-to-eks:
     needs: build-and-push
@@ -119,7 +119,7 @@ jobs:
           
           # Aplicamos el resto
           kubectl apply -f infra/kubernetes/ollama.yaml
-          kubectl apply -f infra/kubernetes/train_and_mlflow.yaml
+          # kubectl apply -f infra/kubernetes/train_and_mlflow.yaml
           kubectl apply -f infra/kubernetes/fastapi.yaml
           kubectl apply -f infra/kubernetes/airflow.yaml
           kubectl apply -f infra/kubernetes/frontend.yaml
