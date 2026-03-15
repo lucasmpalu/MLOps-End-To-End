@@ -9,8 +9,7 @@ from langgraph.graph import StateGraph, END
 from langchain_core.output_parsers import StrOutputParser
 from tavily import TavilyClient
 import yaml
-from pgvector import PGVector
-
+from langchain_community.vectorstores import PGVector
 #
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")

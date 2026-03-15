@@ -53,11 +53,11 @@ jobs:
       #     docker build -t ${{ steps.login-ecr.outputs.registry }}/train-worker:latest ./fine-tuning
       #     docker push ${{ steps.login-ecr.outputs.registry }}/train-worker:latest
 
-      # # 4. BACKEND
-      # - name: Build & Push Backend
-      #   run: |
-      #     docker build -t ${{ steps.login-ecr.outputs.registry }}/backend-api:latest ./backend
-      #     docker push ${{ steps.login-ecr.outputs.registry }}/backend-api:latest
+      # 4. BACKEND
+      - name: Build & Push Backend
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/backend-api:latest ./backend
+          docker push ${{ steps.login-ecr.outputs.registry }}/backend-api:latest
 
       # # 5. FRONTEND
       # - name: Build & Push Frontend
