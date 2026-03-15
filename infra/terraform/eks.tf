@@ -17,7 +17,7 @@ eks_managed_node_groups = {
       min_size       = 1
       max_size       = 3
       desired_size   = 2
-      instance_types = ["t3.medium"] 
+      instance_types = ["t3.micro"] 
       capacity_type  = "ON_DEMAND"
 
       labels = {

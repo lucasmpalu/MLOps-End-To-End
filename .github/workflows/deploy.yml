@@ -97,6 +97,20 @@ jobs:
       - name: Crear archivo de secretos de Kubernetes
         run: |
           echo "${{ secrets.K8S_SECRETS }}" > infra/kubernetes/secrets.yaml
+          
+      - name: Create RDS Secret in Airflow Namespace
+        run: |
+          # Primero nos aseguramos de que el namespace exista
+          kubectl create namespace airflow || echo "Namespace airflow already exists"
+          
+          # Borramos el secreto si ya existe para actualizarlo
+          kubectl delete secret rds-secrets -n airflow || echo "Secret not found, creating new one"
+          
+          # Lo creamos usando los secrets de GitHub
+          kubectl create secret generic rds-secrets \
+            --from-literal=database_url="${{ secrets.DATABASE_URL }}" \
+            --from-literal=airflow-url="${{ secrets.DATABASE_URL }}" \
+            -n airflow
 
       - name: Aplicar Manifiestos de Kubernetes
         run: |
@@ -114,3 +128,4 @@ jobs:
           # Reinicio para asegurar la última imagen
           kubectl rollout restart deployment ollama-deployment
           kubectl rollout restart deployment fastapi-deployment
+          
