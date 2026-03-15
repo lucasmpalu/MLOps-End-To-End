@@ -1,5 +1,7 @@
 FROM unsloth/unsloth:latest
 
+USER root # Esta imagen base tiene un usuario no-root por defecto, pero necesitamos permisos de root para instalar dependencias del sistema
+
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
