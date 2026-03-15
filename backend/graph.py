@@ -28,6 +28,7 @@ llm = ChatOpenAI(
     api_key="ollama",
     temperature=0.1
 )
+#
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
